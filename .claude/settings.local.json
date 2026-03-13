@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(find /c/Users/razva/Desktop/skillSwap -name \"*.sql\" -o -name \"migrations*\" 2>/dev/null | head -20)",
+      "Bash(cd /c/Users/razva/Desktop/skillSwap/backend && python -c \"from app.main import app; print\\('All imports OK'\\)\")",
+      "Bash(source venv/Scripts/activate 2>/dev/null || source venv/bin/activate 2>/dev/null; python -c \"\nfrom supabase import create_client\nc = create_client\\('https://example.com', 'key'\\)\nprint\\(type\\(c.auth\\)\\)\n\" 2>&1; pip list 2>&1 | grep -i -E \"gotrue|supabase|auth\")",
+      "Bash(source venv/Scripts/activate 2>/dev/null || source venv/bin/activate 2>/dev/null; python -c \"\nimport supabase_auth\nprint\\(dir\\(supabase_auth\\)\\)\n\" 2>&1 | tr ',' '\\\\n' | grep -i error)",
+      "Bash(source venv/Scripts/activate 2>/dev/null || source venv/bin/activate 2>/dev/null; python -c \"from supabase_auth.errors import AuthApiError; print\\('OK'\\)\")",
+      "Bash(source venv/Scripts/activate 2>/dev/null || source venv/bin/activate 2>/dev/null; python -c \"from app.main import app; print\\('All imports OK'\\); routes = [r.path for r in app.routes]; print\\('\\\\n'.join\\(sorted\\(routes\\)\\)\\)\")"
+    ]
+  }
+}
