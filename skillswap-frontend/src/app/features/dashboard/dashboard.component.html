@@ -1,0 +1,60 @@
+<div class="dashboard">
+  <header class="dashboard-header">
+    <h1>Welcome back!</h1>
+    <p>Here's what's happening with your skill swaps.</p>
+  </header>
+
+  <div class="dashboard-grid">
+    <!-- Quick Stats -->
+    <div class="card stats-card">
+      <h2>Your Stats</h2>
+      <div class="stats">
+        <div class="stat">
+          <span class="stat-value">--</span>
+          <span class="stat-label">Skills Teaching</span>
+        </div>
+        <div class="stat">
+          <span class="stat-value">--</span>
+          <span class="stat-label">Skills Learning</span>
+        </div>
+        <div class="stat">
+          <span class="stat-value">--</span>
+          <span class="stat-label">Active Swaps</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pending Swap Requests -->
+    <div class="card">
+      <div class="card-header">
+        <h2>Pending Requests</h2>
+        <a routerLink="/swaps" class="view-all">View all</a>
+      </div>
+      <div class="placeholder-content">
+        <p>Your incoming and outgoing swap requests will appear here.</p>
+      </div>
+    </div>
+
+    <!-- Your Skills -->
+    <div class="card">
+      <div class="card-header">
+        <h2>Your Skills</h2>
+        <a routerLink="/profile" class="view-all">Manage</a>
+      </div>
+      <div class="placeholder-content">
+        <p>Skills you're teaching and learning will show up here.</p>
+      </div>
+    </div>
+
+    <!-- Recent Messages -->
+    <div class="card">
+      <div class="card-header">
+        <h2>Recent Messages</h2>
+        <a routerLink="/messages" class="view-all">View all</a>
+      </div>
+      <div class="placeholder-content">
+        <p>Your latest conversations will appear here.</p>
+      </div>
+    </div>
+  </div>
+</div>
