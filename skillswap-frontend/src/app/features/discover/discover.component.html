@@ -30,7 +30,11 @@
     <div class="results-grid">
       @for (card of cards(); track card.profile.id) {
         <div class="user-card">
-          <div class="user-avatar">{{ getInitial(card.profile) }}</div>
+          @if (card.profile.avatar_url) {
+            <img class="user-avatar" [src]="card.profile.avatar_url" [alt]="getDisplayName(card.profile)" />
+          } @else {
+            <div class="user-avatar fallback">{{ getInitial(card.profile) }}</div>
+          }
           <h3>{{ getDisplayName(card.profile) }}</h3>
           <p class="user-location">{{ getLocation(card.profile) }}</p>
 
