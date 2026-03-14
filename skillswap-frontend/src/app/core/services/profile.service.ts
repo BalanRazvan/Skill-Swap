@@ -3,7 +3,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { Profile, ProfileUpdate } from '../models/profile.model';
-import { UserSkill } from '../models/skill.model';
+import { Skill, UserSkill, UserSkillCreate } from '../models/skill.model';
 
 @Injectable({ providedIn: 'root' })
 export class ProfileService {
@@ -45,5 +45,20 @@ export class ProfileService {
 
   updateProfile(data: ProfileUpdate): Observable<Profile> {
     return this.http.put<Profile>(`${this.API_URL}/me`, data);
+  }
+
+  getSkills(params?: { search?: string; category?: string }): Observable<Skill[]> {
+    let httpParams = new HttpParams();
+    if (params?.search) httpParams = httpParams.set('search', params.search);
+    if (params?.category) httpParams = httpParams.set('category', params.category);
+    return this.http.get<Skill[]>(this.SKILLS_URL, { params: httpParams });
+  }
+
+  addUserSkill(data: UserSkillCreate): Observable<UserSkill> {
+    return this.http.post<UserSkill>(this.SKILLS_URL, data);
+  }
+
+  deleteUserSkill(userSkillId: string): Observable<void> {
+    return this.http.delete<void>(`${this.SKILLS_URL}/${userSkillId}`);
   }
 }

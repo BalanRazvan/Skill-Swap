@@ -1,0 +1,169 @@
+<!-- src/app/features/edit-profile/edit-profile.component.html -->
+<div class="edit-profile-page">
+  <div class="edit-profile-card">
+
+    <div class="card-header">
+      <h1>Edit Profile</h1>
+      <div class="header-actions">
+        <a routerLink="/profile" class="btn-cancel">Cancel</a>
+        <button class="btn-save" (click)="onSaveProfile()" [disabled]="isSaving()">
+          {{ isSaving() ? 'Saving...' : 'Save Changes' }}
+        </button>
+      </div>
+    </div>
+
+    <!-- Profile Info Form -->
+    <form [formGroup]="profileForm" class="profile-form">
+      <h2>Basic Info</h2>
+
+      <div class="form-field">
+        <label for="full_name">Full Name</label>
+        <input id="full_name" type="text" formControlName="full_name" placeholder="Your full name" />
+      </div>
+
+      <div class="form-field">
+        <label for="username">Username</label>
+        <input id="username" type="text" formControlName="username" placeholder="e.g. john_doe" />
+      </div>
+
+      <div class="form-field">
+        <label for="location">Location</label>
+        <input id="location" type="text" formControlName="location" placeholder="City, Country" />
+      </div>
+
+      <div class="form-field">
+        <label for="bio">Bio</label>
+        <textarea id="bio" formControlName="bio" rows="4" placeholder="Tell others what you're about..."></textarea>
+      </div>
+
+      <div class="form-field">
+        <label for="avatar_url">Avatar URL</label>
+        <input id="avatar_url" type="url" formControlName="avatar_url" placeholder="https://..." />
+      </div>
+    </form>
+
+    <!-- Skills Section -->
+    <div class="skills-section">
+      <div class="section-header">
+        <h2>Skills</h2>
+        @if (!showAddSkillForm()) {
+          <button class="btn-add-skill" (click)="showAddSkillForm.set(true)">+ Add Skill</button>
+        }
+      </div>
+
+      @if (isLoadingSkills()) {
+        <p class="loading-text">Loading skills...</p>
+      } @else {
+
+        <!-- Add Skill Form -->
+        @if (showAddSkillForm()) {
+          <form [formGroup]="addSkillForm" class="add-skill-form" (ngSubmit)="onAddSkill()">
+
+            <div class="form-field">
+              <label for="skillSearch">Skill</label>
+              <div class="skill-search-wrapper">
+                <input
+                  id="skillSearch"
+                  type="text"
+                  [value]="skillSearchQuery()"
+                  (input)="onSkillSearchChange($any($event.target).value)"
+                  placeholder="Search for a skill..."
+                  autocomplete="off"
+                />
+                @if (isSearching()) {
+                  <span class="search-spinner">Searching...</span>
+                }
+                @if (skillSearchResults().length > 0) {
+                  <ul class="skill-dropdown">
+                    @for (skill of skillSearchResults(); track skill.id) {
+                      <li (click)="onSelectSkill(skill)">
+                        <span class="dropdown-skill-name">{{ skill.name }}</span>
+                        <span class="dropdown-skill-category">{{ skill.category }}</span>
+                      </li>
+                    }
+                  </ul>
+                }
+              </div>
+              @if (selectedSkill()) {
+                <p class="selected-skill-hint">Selected: <strong>{{ selectedSkill()!.name }}</strong> ({{ selectedSkill()!.category }})</p>
+              }
+            </div>
+
+            <div class="form-field">
+              <label for="direction">I want to...</label>
+              <select id="direction" formControlName="direction">
+                <option value="teaching">Teach this skill</option>
+                <option value="learning">Learn this skill</option>
+              </select>
+            </div>
+
+            @if (isAddingTeaching()) {
+              <div class="form-field">
+                <label>Proficiency Level ({{ addSkillForm.get('proficiency_level')?.value ?? 0 }}/5)</label>
+                <input type="range" formControlName="proficiency_level" min="1" max="5" step="1" />
+                <div class="proficiency-dots">
+                  @for (dot of proficiencyDots; track dot) {
+                    <span class="dot" [class.filled]="dot <= (addSkillForm.get('proficiency_level')?.value ?? 0)"></span>
+                  }
+                </div>
+              </div>
+            }
+
+            <div class="form-field">
+              <label for="skill-description">Description (optional)</label>
+              <input id="skill-description" type="text" formControlName="description" placeholder="Brief note about this skill" />
+            </div>
+
+            <div class="add-skill-actions">
+              <button type="button" class="btn-cancel" (click)="showAddSkillForm.set(false)">Cancel</button>
+              <button type="submit" class="btn-save" [disabled]="!selectedSkill()">Add Skill</button>
+            </div>
+          </form>
+        }
+
+        <!-- Teaching Skills List -->
+        <div class="skills-group">
+          <h3>Teaching</h3>
+          @if (teachingSkills().length > 0) {
+            @for (skill of teachingSkills(); track skill.id) {
+              <div class="skill-row">
+                <div class="skill-info">
+                  <span class="skill-name">{{ skill.skill.name }}</span>
+                  <span class="skill-category">{{ skill.skill.category }}</span>
+                  <div class="proficiency-dots">
+                    @for (dot of proficiencyDots; track dot) {
+                      <span class="dot" [class.filled]="dot <= skill.proficiency_level"></span>
+                    }
+                  </div>
+                </div>
+                <button class="btn-remove" type="button" (click)="onRemoveSkill(skill.id)">Remove</button>
+              </div>
+            }
+          } @else {
+            <p class="no-skills">No teaching skills added yet.</p>
+          }
+        </div>
+
+        <!-- Learning Skills List -->
+        <div class="skills-group">
+          <h3>Learning</h3>
+          @if (learningSkills().length > 0) {
+            @for (skill of learningSkills(); track skill.id) {
+              <div class="skill-row">
+                <div class="skill-info">
+                  <span class="skill-name">{{ skill.skill.name }}</span>
+                  <span class="skill-category">{{ skill.skill.category }}</span>
+                </div>
+                <button class="btn-remove" type="button" (click)="onRemoveSkill(skill.id)">Remove</button>
+              </div>
+            }
+          } @else {
+            <p class="no-skills">No learning goals added yet.</p>
+          }
+        </div>
+
+      }
+    </div>
+
+  </div>
+</div>

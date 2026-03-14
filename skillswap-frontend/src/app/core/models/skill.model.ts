@@ -14,3 +14,10 @@ export interface UserSkill {
   description: string;
   created_at: string;
 }
+
+export interface UserSkillCreate {
+  skill_id: string;
+  direction: SkillDirection;
+  proficiency_level?: number;
+  description?: string;
+}
