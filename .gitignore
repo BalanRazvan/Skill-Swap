@@ -1,0 +1,9 @@
+# .gitignore
+.env
+venv/
+__pycache__/
+*.pyc
+
+CLAUDE.md
+.claude/
+node_modules/
