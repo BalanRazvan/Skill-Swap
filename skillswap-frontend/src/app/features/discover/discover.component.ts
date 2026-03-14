@@ -1,5 +1,4 @@
 import { Component, ChangeDetectionStrategy, inject, signal, OnInit } from '@angular/core';
-import { RouterLink } from '@angular/router';
 import { ProfileService } from '../../core/services/profile.service';
 import { Profile } from '../../core/models/profile.model';
 import { UserSkill } from '../../core/models/skill.model';
@@ -15,7 +14,7 @@ export interface DiscoverCard {
 @Component({
   selector: 'app-discover',
   standalone: true,
-  imports: [RouterLink],
+  imports: [],
   templateUrl: './discover.component.html',
   styleUrl: './discover.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -26,9 +25,18 @@ export class DiscoverComponent implements OnInit {
   readonly cards = signal<DiscoverCard[]>([]);
   readonly isLoading = signal(false);
   readonly errorMessage = signal('');
+  readonly selectedCardId = signal<string | null>(null);
 
   ngOnInit(): void {
     this.loadProfiles();
+  }
+
+  toggleCard(profileId: string): void {
+    if (this.selectedCardId() === profileId) {
+      this.selectedCardId.set(null);
+    } else {
+      this.selectedCardId.set(profileId);
+    }
   }
 
   private loadProfiles(): void {
@@ -41,7 +49,6 @@ export class DiscoverComponent implements OnInit {
           return of([]);
         }
 
-        // For each profile, fetch their skills
         const skillRequests = profiles.map((profile) =>
           this.profileService.getUserSkills(profile.id)
         );

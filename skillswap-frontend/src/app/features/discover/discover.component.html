@@ -4,32 +4,28 @@
     <p>Find someone who teaches what you want to learn.</p>
   </header>
 
-  <!-- Loading State -->
   @if (isLoading()) {
     <div class="loading-state">
       <p>Loading profiles...</p>
     </div>
   }
 
-  <!-- Error State -->
   @if (errorMessage()) {
     <div class="error-state">
       <p>{{ errorMessage() }}</p>
     </div>
   }
 
-  <!-- Empty State -->
   @if (!isLoading() && !errorMessage() && cards().length === 0) {
     <div class="empty-state">
       <p>No users found. Be the first to create a profile!</p>
     </div>
   }
 
-  <!-- Results Grid -->
   @if (cards().length > 0) {
     <div class="results-grid">
       @for (card of cards(); track card.profile.id) {
-        <div class="user-card">
+        <div class="user-card" [class.expanded]="selectedCardId() === card.profile.id">
           @if (card.profile.avatar_url) {
             <img class="user-avatar" [src]="card.profile.avatar_url" [alt]="getDisplayName(card.profile)" />
           } @else {
@@ -51,7 +47,55 @@
             <p class="no-skills">No skills listed yet</p>
           }
 
-          <a [routerLink]="['/profile', card.profile.id]" class="btn-view-profile">View Profile</a>
+          <!-- Expanded details -->
+          @if (selectedCardId() === card.profile.id) {
+            <div class="card-details">
+              @if (card.profile.bio) {
+                <p class="user-bio">{{ card.profile.bio }}</p>
+              }
+
+              @if (card.teachingSkills.length > 0) {
+                <div class="detail-section">
+                  <h4>Teaching</h4>
+                  @for (skill of card.teachingSkills; track skill.id) {
+                    <div class="detail-skill">
+                      <span class="detail-skill-name">{{ skill.skill.name }}</span>
+                      <span class="detail-skill-category">{{ skill.skill.category }}</span>
+                      @if (skill.description) {
+                        <p class="detail-skill-desc">{{ skill.description }}</p>
+                      }
+                      <div class="proficiency">
+                        @for (dot of [1, 2, 3, 4, 5]; track dot) {
+                          <span class="dot" [class.filled]="dot <= skill.proficiency_level"></span>
+                        }
+                      </div>
+                    </div>
+                  }
+                </div>
+              }
+
+              @if (card.learningSkills.length > 0) {
+                <div class="detail-section">
+                  <h4>Wants to Learn</h4>
+                  @for (skill of card.learningSkills; track skill.id) {
+                    <div class="detail-skill">
+                      <span class="detail-skill-name">{{ skill.skill.name }}</span>
+                      <span class="detail-skill-category">{{ skill.skill.category }}</span>
+                      @if (skill.description) {
+                        <p class="detail-skill-desc">{{ skill.description }}</p>
+                      }
+                    </div>
+                  }
+                </div>
+              }
+
+              <button class="btn-request-swap">Request Swap</button>
+            </div>
+          }
+
+          <button class="btn-view-profile" (click)="toggleCard(card.profile.id)">
+            {{ selectedCardId() === card.profile.id ? 'Close' : 'View Profile' }}
+          </button>
         </div>
       }
     </div>
