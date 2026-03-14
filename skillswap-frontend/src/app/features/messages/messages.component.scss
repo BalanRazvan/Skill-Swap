@@ -79,6 +79,13 @@
   }
 }
 
+.sidebar-text {
+  padding: 1rem;
+  font-size: 0.875rem;
+  color: #9ca3af;
+  text-align: center;
+}
+
 .unread-badge {
   background-color: #6366f1;
   color: #ffffff;
@@ -161,6 +168,22 @@
     background-color: #ffffff;
     border: 1px solid #e5e7eb;
   }
+}
+
+.no-conversation-state {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #9ca3af;
+  font-size: 0.9375rem;
+}
+
+.chat-status-text {
+  text-align: center;
+  color: #9ca3af;
+  font-size: 0.9375rem;
+  padding: 2rem 0;
 }
 
 .chat-input {
