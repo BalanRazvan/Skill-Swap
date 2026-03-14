@@ -6,53 +6,100 @@
 
   <!-- Tabs -->
   <div class="tabs">
-    <button class="tab active">All</button>
-    <button class="tab">Pending</button>
-    <button class="tab">Accepted</button>
-    <button class="tab">Completed</button>
-    <button class="tab">Declined</button>
+    <button
+      class="tab"
+      *ngFor="let tab of tabs"
+      [class.active]="activeTab() === tab"
+      (click)="setTab(tab)"
+    >
+      {{ tab | titlecase }}
+      <span class="tab-count">{{ counts()[tab] }}</span>
+    </button>
   </div>
 
   <!-- Swap List -->
   <div class="swap-list">
-    <!-- Placeholder swap item -->
-    <div class="swap-item">
-      <div class="swap-users">
-        <div class="swap-avatar">?</div>
-        <div class="swap-details">
-          <h3>Swap with <strong>User Name</strong></h3>
-          <p>You teach <strong>Skill A</strong> — They teach <strong>Skill B</strong></p>
+    <ng-container *ngIf="filteredSwaps().length > 0; else empty">
+      <div
+        class="swap-item"
+        *ngFor="let swap of filteredSwaps(); trackBy: trackById"
+        [attr.data-status]="swap.status"
+      >
+        <div class="swap-users">
+          <div class="swap-avatar">{{ swap.avatarLetter }}</div>
+          <div class="swap-details">
+            <h3>
+              Swap with <strong>{{ swap.userName }}</strong>
+            </h3>
+            <p *ngIf="swap.direction === 'received'">
+              You teach <strong>{{ swap.yourSkill }}</strong>
+              — They teach <strong>{{ swap.theirSkill }}</strong>
+            </p>
+            <p *ngIf="swap.direction === 'sent'">
+              You requested <strong>{{ swap.theirSkill }}</strong>
+              in exchange for <strong>{{ swap.yourSkill }}</strong>
+            </p>
+            <small class="swap-meta-line">{{ swap.message }}</small>
+          </div>
         </div>
-      </div>
-      <div class="swap-meta">
-        <span class="status-badge pending">Pending</span>
-        <div class="swap-actions">
-          <button class="btn-accept">Accept</button>
-          <button class="btn-decline">Decline</button>
-        </div>
-      </div>
-    </div>
 
-    <div class="swap-item">
-      <div class="swap-users">
-        <div class="swap-avatar">?</div>
-        <div class="swap-details">
-          <h3>Swap with <strong>User Name</strong></h3>
-          <p>You teach <strong>Skill C</strong> — They teach <strong>Skill D</strong></p>
-        </div>
-      </div>
-      <div class="swap-meta">
-        <span class="status-badge accepted">Accepted</span>
-        <div class="swap-actions">
-          <button class="btn-message">Message</button>
-          <button class="btn-complete">Mark Complete</button>
-        </div>
-      </div>
-    </div>
+        <div class="swap-meta">
+          <span class="status-badge" [ngClass]="swap.status">
+            {{ swap.status | titlecase }}
+          </span>
 
-    <!-- Empty state -->
-    <div class="empty-state" style="display: none;">
-      <p>No swap requests yet. Go to Discover to find your first match!</p>
-    </div>
+          <div class="swap-actions">
+            <!-- Pending: received => Accept / Decline | sent => Withdraw -->
+            <ng-container *ngIf="swap.status === 'pending'">
+              <button
+                *ngIf="swap.direction === 'received'"
+                class="btn-accept"
+                (click)="acceptSwap(swap.id)"
+              >
+                Accept
+              </button>
+
+              <button
+                *ngIf="swap.direction === 'received'"
+                class="btn-decline"
+                (click)="declineSwap(swap.id)"
+              >
+                Decline
+              </button>
+
+              <button
+                *ngIf="swap.direction === 'sent'"
+                class="btn-decline"
+                (click)="declineSwap(swap.id)"
+              >
+                Withdraw
+              </button>
+            </ng-container>
+
+            <!-- Accepted: Message / Mark Complete -->
+            <ng-container *ngIf="swap.status === 'accepted'">
+              <button class="btn-message" (click)="messageSwap(swap)">Message</button>
+              <button class="btn-complete" (click)="markComplete(swap.id)">Mark Complete</button>
+            </ng-container>
+
+            <!-- Completed: view details (placeholder) -->
+            <ng-container *ngIf="swap.status === 'completed'">
+              <button class="btn-complete" disabled>View Details</button>
+            </ng-container>
+
+            <!-- Declined: allow remove -->
+            <ng-container *ngIf="swap.status === 'declined'">
+              <button class="btn-decline" (click)="removeSwap(swap.id)">Remove</button>
+            </ng-container>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+
+    <ng-template #empty>
+      <div class="empty-state">
+        <p>No swap requests yet. Go to Discover to find your first match!</p>
+      </div>
+    </ng-template>
   </div>
 </div>

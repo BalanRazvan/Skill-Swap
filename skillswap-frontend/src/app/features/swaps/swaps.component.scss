@@ -35,6 +35,10 @@
   font-weight: 500;
   cursor: pointer;
 
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+
   &:hover {
     color: #374151;
   }
@@ -42,6 +46,15 @@
   &.active {
     color: #6366f1;
     border-bottom-color: #6366f1;
+  }
+
+  .tab-count {
+    background: #eef2ff;
+    color: #6366f1;
+    padding: 0.125rem 0.45rem;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: 600;
   }
 }
 
@@ -59,6 +72,7 @@
   background: #ffffff;
   border: 1px solid #e5e7eb;
   border-radius: 0.75rem;
+  transition: transform 120ms ease, box-shadow 120ms ease;
 }
 
 .swap-users {
@@ -198,4 +212,23 @@
   color: #9ca3af;
   background-color: #f9fafb;
   border-radius: 0.75rem;
+}
+
+/* small hover and responsive tweaks */
+.swap-item:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 6px 18px rgba(16, 24, 40, 0.06);
+}
+
+@media (max-width: 640px) {
+  .swap-item {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.75rem;
+  }
+
+  .swap-meta {
+    justify-content: space-between;
+    width: 100%;
+  }
 }
