@@ -89,7 +89,83 @@
                 </div>
               }
 
-              <button class="btn-request-swap">Request Swap</button>
+              <!-- Swap request section -->
+              @if (swapRequestCardId() === card.profile.id) {
+                <!-- Swap request form -->
+                <div class="swap-form">
+                  @if (isLoadingUserSkills()) {
+                    <p class="loading-skills">Loading your skills...</p>
+                  } @else if (currentUserTeachingSkills().length === 0) {
+                    <p class="no-skills-message">
+                      You don't have any teaching skills yet.
+                      <a routerLink="/edit-profile">Add skills to your profile</a> first.
+                    </p>
+                  } @else {
+                    <form [formGroup]="swapForm" (ngSubmit)="submitSwapRequest(card)">
+                      <div class="form-group">
+                        <label for="requesterSkill">I'll teach:</label>
+                        <select id="requesterSkill" formControlName="requesterSkillId">
+                          <option value="">Select a skill...</option>
+                          @for (skill of currentUserTeachingSkills(); track skill.id) {
+                            <option [value]="skill.skill.id">{{ skill.skill.name }}</option>
+                          }
+                        </select>
+                      </div>
+
+                      <div class="form-group">
+                        <label for="responderSkill">I want to learn:</label>
+                        <select id="responderSkill" formControlName="responderSkillId">
+                          <option value="">Select a skill...</option>
+                          @for (skill of card.teachingSkills; track skill.id) {
+                            <option [value]="skill.skill.id">{{ skill.skill.name }}</option>
+                          }
+                        </select>
+                      </div>
+
+                      <div class="form-group">
+                        <label for="swapMessage">Message (optional):</label>
+                        <textarea
+                          id="swapMessage"
+                          formControlName="message"
+                          placeholder="Introduce yourself or suggest a schedule..."
+                          rows="3"
+                        ></textarea>
+                      </div>
+
+                      @if (swapError()) {
+                        <p class="swap-form-error">{{ swapError() }}</p>
+                      }
+
+                      <div class="swap-form-actions">
+                        <button
+                          type="submit"
+                          class="btn-request-swap"
+                          [disabled]="swapForm.invalid || isSubmittingSwap()"
+                        >
+                          {{ isSubmittingSwap() ? 'Sending...' : 'Send Request' }}
+                        </button>
+                        <button type="button" class="btn-cancel-swap" (click)="cancelSwapRequest()">
+                          Cancel
+                        </button>
+                      </div>
+                    </form>
+                  }
+                </div>
+              } @else if (swapSuccessCardId() === card.profile.id) {
+                <div class="swap-success">
+                  Swap request sent successfully!
+                </div>
+              } @else if (card.teachingSkills.length > 0) {
+                @if (isAuthenticated()) {
+                  <button class="btn-request-swap" (click)="openSwapRequest(card.profile.id)">
+                    Request Swap
+                  </button>
+                } @else {
+                  <a routerLink="/login" class="btn-request-swap btn-login-swap">
+                    Log in to Request Swap
+                  </a>
+                }
+              }
             </div>
           }
 

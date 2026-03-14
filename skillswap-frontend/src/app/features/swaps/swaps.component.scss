@@ -139,6 +139,11 @@
     background-color: #fee2e2;
     color: #991b1b;
   }
+
+  &.cancelled {
+    background-color: #f3f4f6;
+    color: #6b7280;
+  }
 }
 
 .swap-actions {
@@ -206,12 +211,34 @@
   }
 }
 
+.swap-meta-line {
+  display: block;
+  color: #6b7280;
+  font-size: 0.8rem;
+  margin-top: 0.25rem;
+  font-style: italic;
+}
+
+.swap-date {
+  display: block;
+  color: #9ca3af;
+  font-size: 0.75rem;
+  margin-top: 0.25rem;
+}
+
+.loading-state,
+.error-state,
 .empty-state {
   padding: 3rem;
   text-align: center;
   color: #9ca3af;
   background-color: #f9fafb;
   border-radius: 0.75rem;
+}
+
+.error-state {
+  color: #dc2626;
+  background-color: #fef2f2;
 }
 
 /* small hover and responsive tweaks */
