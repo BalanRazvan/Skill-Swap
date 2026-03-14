@@ -1,60 +1,90 @@
 <div class="dashboard">
   <header class="dashboard-header">
-    <h1>Welcome back!</h1>
+    <h1>Welcome back, {{ displayName() }}!</h1>
     <p>Here's what's happening with your skill swaps.</p>
   </header>
 
-  <div class="dashboard-grid">
-    <!-- Quick Stats -->
-    <div class="card stats-card">
-      <h2>Your Stats</h2>
-      <div class="stats">
-        <div class="stat">
-          <span class="stat-value">--</span>
-          <span class="stat-label">Skills Teaching</span>
-        </div>
-        <div class="stat">
-          <span class="stat-value">--</span>
-          <span class="stat-label">Skills Learning</span>
-        </div>
-        <div class="stat">
-          <span class="stat-value">--</span>
-          <span class="stat-label">Active Swaps</span>
-        </div>
+  @if (isLoading()) {
+    <div class="loading-state">Loading your dashboard...</div>
+  } @else {
+    <!-- Stats Row -->
+    <div class="stats-row">
+      <div class="stat">
+        <span class="stat-value">{{ teachingSkills().length }}</span>
+        <span class="stat-label">Teaching</span>
+      </div>
+      <div class="stat">
+        <span class="stat-value">{{ learningSkills().length }}</span>
+        <span class="stat-label">Learning</span>
+      </div>
+      <div class="stat">
+        <span class="stat-value">{{ activeSwapCount() }}</span>
+        <span class="stat-label">Active Swaps</span>
+      </div>
+      <div class="stat">
+        <span class="stat-value">{{ completedSwapCount() }}</span>
+        <span class="stat-label">Completed</span>
       </div>
     </div>
 
-    <!-- Pending Swap Requests -->
-    <div class="card">
-      <div class="card-header">
-        <h2>Pending Requests</h2>
-        <a routerLink="/swaps" class="view-all">View all</a>
-      </div>
-      <div class="placeholder-content">
-        <p>Your incoming and outgoing swap requests will appear here.</p>
-      </div>
-    </div>
+    <!-- Cards Grid -->
+    <div class="dashboard-grid">
+      <!-- Pending Requests -->
+      <div class="card">
+        <div class="card-header">
+          <h2>Pending Requests</h2>
+          <a routerLink="/swaps" class="view-all">View all</a>
+        </div>
 
-    <!-- Your Skills -->
-    <div class="card">
-      <div class="card-header">
-        <h2>Your Skills</h2>
-        <a routerLink="/profile" class="view-all">Manage</a>
+        @if (pendingSwaps().length === 0) {
+          <p class="empty-text">No pending requests right now.</p>
+        } @else {
+          <div class="swap-list">
+            @for (swap of pendingSwaps(); track swap.id) {
+              <div class="swap-row">
+                <div class="swap-avatar">{{ getOtherUserName(swap).charAt(0).toUpperCase() }}</div>
+                <div class="swap-info">
+                  <span class="swap-name">{{ getOtherUserName(swap) }}</span>
+                  <span class="swap-skills">{{ getSwapSkillSummary(swap) }}</span>
+                </div>
+              </div>
+            }
+          </div>
+        }
       </div>
-      <div class="placeholder-content">
-        <p>Skills you're teaching and learning will show up here.</p>
-      </div>
-    </div>
 
-    <!-- Recent Messages -->
-    <div class="card">
-      <div class="card-header">
-        <h2>Recent Messages</h2>
-        <a routerLink="/messages" class="view-all">View all</a>
-      </div>
-      <div class="placeholder-content">
-        <p>Your latest conversations will appear here.</p>
+      <!-- Your Skills -->
+      <div class="card">
+        <div class="card-header">
+          <h2>Your Skills</h2>
+          <a routerLink="/edit-profile" class="view-all">Manage</a>
+        </div>
+
+        @if (teachingSkills().length === 0 && learningSkills().length === 0) {
+          <p class="empty-text">
+            No skills added yet. <a routerLink="/edit-profile">Add some!</a>
+          </p>
+        } @else {
+          <div class="skills-section">
+            @if (teachingSkills().length > 0) {
+              <p class="skills-label">Teaching</p>
+              <div class="skill-tags">
+                @for (skill of teachingSkills().slice(0, 4); track skill.id) {
+                  <span class="skill-tag teaches">{{ skill.skill.name }}</span>
+                }
+              </div>
+            }
+            @if (learningSkills().length > 0) {
+              <p class="skills-label">Learning</p>
+              <div class="skill-tags">
+                @for (skill of learningSkills().slice(0, 4); track skill.id) {
+                  <span class="skill-tag learns">{{ skill.skill.name }}</span>
+                }
+              </div>
+            }
+          </div>
+        }
       </div>
     </div>
-  </div>
+  }
 </div>
