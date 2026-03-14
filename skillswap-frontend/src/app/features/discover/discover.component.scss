@@ -161,3 +161,22 @@
     background-color: #f9fafb;
   }
 }
+
+.loading-state,
+.error-state,
+.empty-state {
+  text-align: center;
+  padding: 3rem 1rem;
+  color: #6b7280;
+  font-size: 1rem;
+}
+
+.error-state {
+  color: #dc2626;
+}
+
+.no-skills {
+  color: #9ca3af;
+  font-size: 0.875rem;
+  margin-top: 1rem;
+}

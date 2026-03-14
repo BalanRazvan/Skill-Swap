@@ -4,56 +4,52 @@
     <p>Find someone who teaches what you want to learn.</p>
   </header>
 
-  <!-- Search & Filters -->
-  <div class="search-bar">
-    <input type="text" placeholder="Search by name, skill, or category..." />
-    <button class="btn-search">Search</button>
-  </div>
+  <!-- Loading State -->
+  @if (isLoading()) {
+    <div class="loading-state">
+      <p>Loading profiles...</p>
+    </div>
+  }
 
-  <div class="filter-tags">
-    <button class="filter-tag active">All</button>
-    <button class="filter-tag">Programming</button>
-    <button class="filter-tag">Design</button>
-    <button class="filter-tag">Music</button>
-    <button class="filter-tag">Languages</button>
-    <button class="filter-tag">Cooking</button>
-    <button class="filter-tag">Photography</button>
-  </div>
+  <!-- Error State -->
+  @if (errorMessage()) {
+    <div class="error-state">
+      <p>{{ errorMessage() }}</p>
+    </div>
+  }
+
+  <!-- Empty State -->
+  @if (!isLoading() && !errorMessage() && cards().length === 0) {
+    <div class="empty-state">
+      <p>No users found. Be the first to create a profile!</p>
+    </div>
+  }
 
   <!-- Results Grid -->
-  <div class="results-grid">
-    <!-- Placeholder user cards -->
-    <div class="user-card">
-      <div class="user-avatar">?</div>
-      <h3>User Name</h3>
-      <p class="user-location">Location</p>
-      <div class="user-skills">
-        <span class="skill-tag teaches">Teaches: Skill</span>
-        <span class="skill-tag learns">Learns: Skill</span>
-      </div>
-      <a routerLink="/profile" class="btn-view-profile">View Profile</a>
-    </div>
+  @if (cards().length > 0) {
+    <div class="results-grid">
+      @for (card of cards(); track card.profile.id) {
+        <div class="user-card">
+          <div class="user-avatar">{{ getInitial(card.profile) }}</div>
+          <h3>{{ getDisplayName(card.profile) }}</h3>
+          <p class="user-location">{{ getLocation(card.profile) }}</p>
 
-    <div class="user-card">
-      <div class="user-avatar">?</div>
-      <h3>User Name</h3>
-      <p class="user-location">Location</p>
-      <div class="user-skills">
-        <span class="skill-tag teaches">Teaches: Skill</span>
-        <span class="skill-tag learns">Learns: Skill</span>
-      </div>
-      <a routerLink="/profile" class="btn-view-profile">View Profile</a>
-    </div>
+          <div class="user-skills">
+            @for (skill of card.teachingSkills; track skill.id) {
+              <span class="skill-tag teaches">Teaches: {{ skill.skill.name }}</span>
+            }
+            @for (skill of card.learningSkills; track skill.id) {
+              <span class="skill-tag learns">Learns: {{ skill.skill.name }}</span>
+            }
+          </div>
 
-    <div class="user-card">
-      <div class="user-avatar">?</div>
-      <h3>User Name</h3>
-      <p class="user-location">Location</p>
-      <div class="user-skills">
-        <span class="skill-tag teaches">Teaches: Skill</span>
-        <span class="skill-tag learns">Learns: Skill</span>
-      </div>
-      <a routerLink="/profile" class="btn-view-profile">View Profile</a>
+          @if (card.teachingSkills.length === 0 && card.learningSkills.length === 0) {
+            <p class="no-skills">No skills listed yet</p>
+          }
+
+          <a [routerLink]="['/profile', card.profile.id]" class="btn-view-profile">View Profile</a>
+        </div>
+      }
     </div>
-  </div>
+  }
 </div>
