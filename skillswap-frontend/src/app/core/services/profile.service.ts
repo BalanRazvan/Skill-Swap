@@ -2,7 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
-import { Profile } from '../models/profile.model';
+import { Profile, ProfileUpdate } from '../models/profile.model';
 import { UserSkill } from '../models/skill.model';
 
 @Injectable({ providedIn: 'root' })
@@ -41,5 +41,9 @@ export class ProfileService {
 
   getUserSkills(userId: string): Observable<UserSkill[]> {
     return this.http.get<UserSkill[]>(`${this.SKILLS_URL}/user/${userId}`);
+  }
+
+  updateProfile(data: ProfileUpdate): Observable<Profile> {
+    return this.http.put<Profile>(`${this.API_URL}/me`, data);
   }
 }

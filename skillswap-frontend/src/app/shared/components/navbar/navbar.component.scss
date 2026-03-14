@@ -59,3 +59,23 @@
     background-color: #4f46e5;
   }
 }
+
+.user-greeting {
+  color: #374151;
+  font-weight: 500;
+}
+
+.btn-logout {
+  color: #6b7280;
+  font-weight: 500;
+  padding: 0.5rem 1rem;
+  background: none;
+  border: 1px solid #d1d5db;
+  border-radius: 0.5rem;
+  cursor: pointer;
+
+  &:hover {
+    background-color: #f9fafb;
+    color: #374151;
+  }
+}

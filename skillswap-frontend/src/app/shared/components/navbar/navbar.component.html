@@ -3,14 +3,21 @@
 
   <div class="navbar-links">
     <a routerLink="/discover" routerLinkActive="active">Discover</a>
-    <a routerLink="/dashboard" routerLinkActive="active">Dashboard</a>
-    <a routerLink="/swaps" routerLinkActive="active">Swaps</a>
-    <a routerLink="/messages" routerLinkActive="active">Messages</a>
-    <a routerLink="/profile" routerLinkActive="active">Profile</a>
+    @if (isAuthenticated()) {
+      <a routerLink="/dashboard" routerLinkActive="active">Dashboard</a>
+      <a routerLink="/swaps" routerLinkActive="active">Swaps</a>
+      <a routerLink="/messages" routerLinkActive="active">Messages</a>
+      <a routerLink="/profile" routerLinkActive="active">Profile</a>
+    }
   </div>
 
   <div class="navbar-auth">
-    <a routerLink="/login" class="btn-login">Log In</a>
-    <a routerLink="/signup" class="btn-signup">Sign Up</a>
+    @if (isAuthenticated()) {
+      <span class="user-greeting">{{ displayName() }}</span>
+      <button class="btn-logout" (click)="onLogout()">Log Out</button>
+    } @else {
+      <a routerLink="/login" class="btn-login">Log In</a>
+      <a routerLink="/signup" class="btn-signup">Sign Up</a>
+    }
   </div>
 </nav>

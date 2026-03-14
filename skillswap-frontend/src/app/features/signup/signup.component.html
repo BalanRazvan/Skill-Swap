@@ -3,28 +3,34 @@
     <h1>Create your account</h1>
     <p class="auth-subtitle">Join SkillSwap and start learning</p>
 
-    <form class="auth-form">
+    @if (errorMessage()) {
+      <div class="error-message">{{ errorMessage() }}</div>
+    }
+
+    <form class="auth-form" [formGroup]="signupForm" (ngSubmit)="onSubmit()">
       <div class="form-group">
         <label for="fullName">Full Name</label>
-        <input id="fullName" type="text" placeholder="Jane Doe" />
+        <input id="fullName" type="text" formControlName="full_name" placeholder="Jane Doe" />
       </div>
 
       <div class="form-group">
         <label for="username">Username</label>
-        <input id="username" type="text" placeholder="janedoe" />
+        <input id="username" type="text" formControlName="username" placeholder="janedoe" />
       </div>
 
       <div class="form-group">
         <label for="email">Email</label>
-        <input id="email" type="email" placeholder="you@example.com" />
+        <input id="email" type="email" formControlName="email" placeholder="you@example.com" />
       </div>
 
       <div class="form-group">
         <label for="password">Password</label>
-        <input id="password" type="password" placeholder="Min. 6 characters" />
+        <input id="password" type="password" formControlName="password" placeholder="Min. 6 characters" />
       </div>
 
-      <button type="submit" class="btn-submit">Sign Up</button>
+      <button type="submit" class="btn-submit" [disabled]="isSubmitting()">
+        {{ isSubmitting() ? 'Creating account...' : 'Sign Up' }}
+      </button>
     </form>
 
     <p class="auth-footer">

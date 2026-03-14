@@ -6,4 +6,13 @@ export interface Profile {
   bio: string | null;
   location: string | null;
   created_at: string | null;
+  email?: string;
+}
+
+export interface ProfileUpdate {
+  username?: string;
+  full_name?: string;
+  avatar_url?: string;
+  bio?: string;
+  location?: string;
 }

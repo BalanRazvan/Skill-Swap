@@ -1,11 +1,98 @@
 <div class="profile-page">
-  <div class="login-prompt">
-    <div class="prompt-icon">&#128100;</div>
-    <h1>Your Profile</h1>
-    <p>Log in or sign up to see and manage your profile, skills, and swap requests.</p>
-    <div class="prompt-actions">
-      <a routerLink="/login" class="btn-login">Log In</a>
-      <a routerLink="/signup" class="btn-signup">Sign Up</a>
+  @if (isAuthLoading()) {
+    <div class="loading-state">Loading...</div>
+  } @else if (currentUser(); as user) {
+    <div class="profile-card">
+      <div class="profile-header">
+        @if (user.avatar_url) {
+          <img [src]="user.avatar_url" alt="Avatar" class="profile-avatar" />
+        } @else {
+          <div class="profile-avatar fallback">{{ initial() }}</div>
+        }
+
+        <div class="profile-info">
+          <h1>{{ displayName() }}</h1>
+          @if (user.username) {
+            <p class="profile-username">{{ '@' + user.username }}</p>
+          }
+          @if (user.email) {
+            <p class="profile-email">{{ user.email }}</p>
+          }
+          @if (user.location) {
+            <p class="profile-location">{{ user.location }}</p>
+          }
+        </div>
+      </div>
+
+      @if (user.bio) {
+        <div class="profile-bio">
+          <p>{{ user.bio }}</p>
+        </div>
+      }
+
+      @if (isLoadingSkills()) {
+        <div class="loading-state">Loading skills...</div>
+      } @else {
+        <div class="profile-skills">
+          <div class="skills-section">
+            <h2>Teaching</h2>
+            @if (teachingSkills().length > 0) {
+              @for (skill of teachingSkills(); track skill.id) {
+                <div class="skill-item">
+                  <div class="skill-header">
+                    <span class="skill-name">{{ skill.skill.name }}</span>
+                    <span class="skill-category">{{ skill.skill.category }}</span>
+                  </div>
+                  @if (skill.description) {
+                    <p class="skill-description">{{ skill.description }}</p>
+                  }
+                  <div class="proficiency">
+                    @for (dot of proficiencyDots; track dot) {
+                      <span class="dot" [class.filled]="dot <= skill.proficiency_level"></span>
+                    }
+                  </div>
+                </div>
+              }
+            } @else {
+              <p class="no-skills">No teaching skills added yet.</p>
+            }
+          </div>
+
+          <div class="skills-section">
+            <h2>Learning</h2>
+            @if (learningSkills().length > 0) {
+              @for (skill of learningSkills(); track skill.id) {
+                <div class="skill-item">
+                  <div class="skill-header">
+                    <span class="skill-name">{{ skill.skill.name }}</span>
+                    <span class="skill-category">{{ skill.skill.category }}</span>
+                  </div>
+                  @if (skill.description) {
+                    <p class="skill-description">{{ skill.description }}</p>
+                  }
+                </div>
+              }
+            } @else {
+              <p class="no-skills">No learning goals added yet.</p>
+            }
+          </div>
+        </div>
+      }
+
+      <div class="profile-actions">
+        <button class="btn-edit-profile" disabled>Edit Profile</button>
+        <button class="btn-logout" (click)="onLogout()">Log Out</button>
+      </div>
     </div>
-  </div>
+  } @else {
+    <div class="login-prompt">
+      <div class="prompt-icon">&#128100;</div>
+      <h1>Your Profile</h1>
+      <p>Log in or sign up to see and manage your profile, skills, and swap requests.</p>
+      <div class="prompt-actions">
+        <a routerLink="/login" class="btn-login">Log In</a>
+        <a routerLink="/signup" class="btn-signup">Sign Up</a>
+      </div>
+    </div>
+  }
 </div>

@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { authGuard } from './core/guards/auth.guard';
 
 export const routes: Routes = [
   {
@@ -28,6 +29,7 @@ export const routes: Routes = [
       import('./features/dashboard/dashboard.component').then(
         (m) => m.DashboardComponent
       ),
+    canActivate: [authGuard],
   },
   {
     path: 'profile',
@@ -49,6 +51,7 @@ export const routes: Routes = [
       import('./features/swaps/swaps.component').then(
         (m) => m.SwapsComponent
       ),
+    canActivate: [authGuard],
   },
   {
     path: 'messages',
@@ -56,6 +59,7 @@ export const routes: Routes = [
       import('./features/messages/messages.component').then(
         (m) => m.MessagesComponent
       ),
+    canActivate: [authGuard],
   },
   {
     path: '**',

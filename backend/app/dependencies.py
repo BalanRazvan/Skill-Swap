@@ -39,11 +39,15 @@ async def get_current_user(
         signing_key = jwks_client.get_signing_key_from_jwt(token)
 
         # Decode and verify the JWT token
+        # iat validation disabled — it's informational, not a security check.
+        # exp still enforced. Avoids clock-skew failures with Supabase.
         payload = pyjwt.decode(
             token,
             signing_key.key,
             algorithms=["ES256"],
             audience="authenticated",
+            options={"verify_iat": False},
+            leeway=30,
         )
         user_id = payload.get("sub")  # 'sub' is the standard JWT claim for user ID
         if user_id is None:
