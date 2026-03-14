@@ -2,11 +2,23 @@
 from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from supabase import create_client, Client
-from jose import jwt, JWTError
+import jwt as pyjwt
+from jwt import PyJWKClient
 from app.config import get_settings, Settings
 
 # HTTPBearer extracts the token from the "Authorization: Bearer <token>" header
 security = HTTPBearer()
+
+# Cache the JWKS client so we don't fetch keys on every request
+_jwks_client = None
+
+
+def _get_jwks_client(supabase_url: str) -> PyJWKClient:
+    global _jwks_client
+    if _jwks_client is None:
+        jwks_url = f"{supabase_url}/auth/v1/.well-known/jwks.json"
+        _jwks_client = PyJWKClient(jwks_url)
+    return _jwks_client
 
 
 def get_supabase_client() -> Client:
@@ -22,11 +34,15 @@ async def get_current_user(
 
     token = credentials.credentials
     try:
+        # Get the signing key from Supabase JWKS endpoint
+        jwks_client = _get_jwks_client(settings.SUPABASE_URL)
+        signing_key = jwks_client.get_signing_key_from_jwt(token)
+
         # Decode and verify the JWT token
-        payload = jwt.decode(
+        payload = pyjwt.decode(
             token,
-            settings.SUPABASE_JWT_SECRET,
-            algorithms=["HS256"],
+            signing_key.key,
+            algorithms=["ES256"],
             audience="authenticated",
         )
         user_id = payload.get("sub")  # 'sub' is the standard JWT claim for user ID
@@ -36,7 +52,7 @@ async def get_current_user(
                 detail="Invalid token: no user ID",
             )
         return {"id": user_id, "email": payload.get("email")}
-    except JWTError as e:
+    except pyjwt.PyJWTError as e:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail=f"Invalid token: {str(e)}",

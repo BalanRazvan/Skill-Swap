@@ -27,9 +27,16 @@ async def sign_up(
     """
     try:
         # Create the auth user in Supabase
+        # Pass metadata so the DB trigger can use it for the profile
         auth_response = db.auth.sign_up({
             "email": data.email,
             "password": data.password,
+            "options": {
+                "data": {
+                    "username": data.username,
+                    "full_name": data.full_name,
+                }
+            },
         })
     except AuthApiError as e:
         raise HTTPException(status_code=400, detail=str(e))
@@ -39,7 +46,7 @@ async def sign_up(
 
     user_id = auth_response.user.id
 
-    # Create a profile row for the new user
+    # Update profile with username/full_name (trigger may have created it)
     try:
         db.table("profiles").upsert({
             "id": user_id,
@@ -47,7 +54,7 @@ async def sign_up(
             "full_name": data.full_name,
         }).execute()
     except Exception:
-        pass  # Profile might be auto-created by a DB trigger
+        pass  # Profile already set by the trigger
 
     return {
         "user": {

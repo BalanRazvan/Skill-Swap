@@ -85,10 +85,10 @@ async def get_swap_messages(
 
     # Mark unread messages from the OTHER user as read
     db.table("messages") \
-        .update({"is_read": True}) \
+        .update({"read": True}) \
         .eq("swap_id", swap_id) \
         .neq("sender_id", user["id"]) \
-        .eq("is_read", False) \
+        .eq("read", False) \
         .execute()
 
     return result.data
@@ -130,7 +130,7 @@ async def list_conversations(
             .select("id", count="exact") \
             .eq("swap_id", swap["id"]) \
             .neq("sender_id", user["id"]) \
-            .eq("is_read", False) \
+            .eq("read", False) \
             .execute()
 
         # Figure out who the "other" person is
@@ -165,7 +165,7 @@ async def mark_message_read(
 ):
     """Mark a single message as read."""
     result = db.table("messages") \
-        .update({"is_read": True}) \
+        .update({"read": True}) \
         .eq("id", message_id) \
         .neq("sender_id", user["id"]) \
         .execute()

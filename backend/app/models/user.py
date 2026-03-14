@@ -1,13 +1,9 @@
-"""
-Pydantic models for user/profile data.
-"""
 from pydantic import BaseModel, Field
 from typing import Optional
 from datetime import datetime
 
 
 class ProfileUpdate(BaseModel):
-    """Fields a user can update on their own profile."""
     username: Optional[str] = Field(None, min_length=3, max_length=30)
     full_name: Optional[str] = Field(None, max_length=100)
     avatar_url: Optional[str] = None
